@@ -1,12 +1,18 @@
 import 'dart:async';
 
+import 'package:countdown_app/database/database_helper.dart';
 import 'package:countdown_app/notification/notification_api.dart';
 import 'package:countdown_app/widgets/button_widget.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:intl/intl.dart';
+
+import 'model/count_down.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -81,6 +87,13 @@ class _CountdownState extends State<Countdown> {
     audioCache.play('ringtone.wav');
   }
 
+  Future saveDate() async {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(now);
+    await DatabaseHelper.instance
+        .addCountDowns(CountDown(seconds: seconds, date: formattedDate));
+  }
+
   void startTime({bool isReset = false}) {
     if (isReset) {
       resetTime();
@@ -97,6 +110,7 @@ class _CountdownState extends State<Countdown> {
               title: 'Finished Clockdown',
               message: 'Finished in $minutesResult minutes',
               payload: 'harry.countdown');
+          saveDate();
         }
       });
     });
@@ -235,7 +249,6 @@ class DiagramPage extends StatefulWidget {
 
 class _DiagramPageState extends State<DiagramPage> {
   final String? payload;
-
   _DiagramPageState({required this.payload});
 
   @override
@@ -244,9 +257,111 @@ class _DiagramPageState extends State<DiagramPage> {
       appBar: AppBar(
         title: Text('Diagram Track'),
       ),
-      body: Center(
-        child: Text('Success'),
+      body: FutureBuilder<List<CountDown>>(
+        future: DatabaseHelper.instance.getCountDowns(),
+        builder:
+            (BuildContext context, AsyncSnapshot<List<CountDown>> snapshot) {
+          if (!snapshot.hasData) {
+            return Center(
+              child: Text('Loading...'),
+            );
+          } else {
+            return snapshot.data!.isEmpty
+                ? Center(
+                    child: Text('Data is Empty'),
+                  )
+                : BarChart(
+                    BarChartData(
+                      barTouchData: barTouchData,
+                      titlesData: titlesData,
+                      borderData: borderData,
+                      barGroups: getDatas(snapshot.data ?? []),
+                      alignment: BarChartAlignment.spaceAround,
+                      maxY: 20,
+                    ),
+                  );
+          }
+        },
       ),
     );
+  }
+
+  BarTouchData get barTouchData => BarTouchData(
+        enabled: false,
+        touchTooltipData: BarTouchTooltipData(
+          tooltipBgColor: Colors.transparent,
+          tooltipPadding: const EdgeInsets.all(0),
+          tooltipMargin: 8,
+          getTooltipItem: (
+            BarChartGroupData group,
+            int groupIndex,
+            BarChartRodData rod,
+            int rodIndex,
+          ) {
+            return BarTooltipItem(
+              rod.y.round().toString(),
+              const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            );
+          },
+        ),
+      );
+
+  FlTitlesData get titlesData => FlTitlesData(
+        show: true,
+        bottomTitles: SideTitles(
+          showTitles: true,
+          getTextStyles: (context, value) => const TextStyle(
+            color: Color(0xff7589a2),
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+          ),
+          margin: 20,
+          getTitles: (double value) {
+            int result = value.round();
+            return '$result';
+          },
+        ),
+        leftTitles: SideTitles(
+          showTitles: true,
+          getTextStyles: (context, value) => const TextStyle(
+            color: Color(0xff7589a2),
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+          ),
+          getTitles: (double value) {
+            int result = value.round() * 3;
+            return '$result';
+          },
+          margin: 3,
+          reservedSize: 20,
+          interval: 10,
+        ),
+        topTitles: SideTitles(showTitles: true, margin: 12),
+        rightTitles: SideTitles(showTitles: false),
+      );
+
+  FlBorderData get borderData => FlBorderData(
+        show: false,
+      );
+
+  List<BarChartGroupData> getDatas(List<CountDown> data) {
+    List<BarChartGroupData> result = [];
+    for (var value in data) {
+      result.add(
+        BarChartGroupData(
+          x: value.id ?? 0,
+          barRods: [
+            BarChartRodData(
+                y: (value.seconds! / 180),
+                colors: [Colors.lightBlueAccent, Colors.greenAccent])
+          ],
+          showingTooltipIndicators: [0],
+        ),
+      );
+    }
+    return result;
   }
 }
