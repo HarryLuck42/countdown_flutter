@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:countdown_app/notification/notification_api.dart';
 import 'package:countdown_app/widgets/button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 void main() {
   runApp(const MyApp());
@@ -41,6 +43,17 @@ class _CountdownState extends State<Countdown> {
   void initState() {
     updateTimes();
     super.initState();
+    NotificationApi.initialized();
+    listenedNotification();
+  }
+
+  void listenedNotification() =>
+      NotificationApi.onNotification.stream.listen(onClickNotification);
+
+  void onClickNotification(String? payload) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => DiagramPage(payload: payload),
+    ));
   }
 
   void updateTimes() {
@@ -80,6 +93,10 @@ class _CountdownState extends State<Countdown> {
         } else {
           stopTime(isReset: true);
           playRingtone();
+          NotificationApi.showNotification(
+              title: 'Finished Clockdown',
+              message: 'Finished in $minutesResult minutes',
+              payload: 'harry.countdown');
         }
       });
     });
@@ -203,6 +220,32 @@ class _CountdownState extends State<Countdown> {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class DiagramPage extends StatefulWidget {
+  final String? payload;
+  const DiagramPage({Key? key, required this.payload}) : super(key: key);
+
+  @override
+  _DiagramPageState createState() => _DiagramPageState(payload: payload);
+}
+
+class _DiagramPageState extends State<DiagramPage> {
+  final String? payload;
+
+  _DiagramPageState({required this.payload});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Diagram Track'),
+      ),
+      body: Center(
+        child: Text('Success'),
       ),
     );
   }
