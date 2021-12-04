@@ -22,7 +22,11 @@ class ButtonWidget extends StatelessWidget {
         onPressed: onClicked,
         child: Text(
           title,
-          style: TextStyle(fontSize: 18.0, color: colorText),
+          style: TextStyle(
+            fontSize: 18.0,
+            color: colorText,
+            fontFamily: 'JosefinSans',
+          ),
         ),
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(colorBackground),

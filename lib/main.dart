@@ -133,7 +133,7 @@ class _CountdownState extends State<Countdown> {
             onClicked: () {
               isRunning ? stopTime() : startTime();
             },
-            colorBackground: Colors.teal,
+            colorBackground: Color(0xFF283593),
           )
         : ButtonWidget(
             title: 'Start',
@@ -141,7 +141,7 @@ class _CountdownState extends State<Countdown> {
             onClicked: () {
               startTime();
             },
-            colorBackground: Colors.blue,
+            colorBackground: Color(0xFF3722f6),
           );
   }
 
@@ -152,15 +152,35 @@ class _CountdownState extends State<Countdown> {
       onClicked: () {
         stopTime(isReset: true);
       },
-      colorBackground: Colors.red,
+      colorBackground: Color(0xFFd602ee),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFeee6ff),
       appBar: AppBar(
-        title: Text('CountDown App'),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+                colors: [
+                  const Color(0xFF3722f6),
+                  const Color(0xFF714cfe),
+                ],
+                begin: const FractionalOffset(0.0, 0.0),
+                end: const FractionalOffset(1.0, 0.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp),
+          ),
+        ),
+        title: Text(
+          'CountDown App',
+          style: TextStyle(
+              fontFamily: 'Caveat',
+              fontWeight: FontWeight.bold,
+              fontSize: 27.0),
+        ),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -173,9 +193,9 @@ class _CountdownState extends State<Countdown> {
               children: [
                 CircularProgressIndicator(
                   value: seconds / settingSeconds,
-                  valueColor: AlwaysStoppedAnimation(Colors.teal),
+                  valueColor: AlwaysStoppedAnimation(Color(0xFF3722f6)),
                   strokeWidth: 12.0,
-                  backgroundColor: Colors.teal.shade100,
+                  backgroundColor: Color(0xFFb39afd),
                 ),
                 Center(
                   child: Row(
@@ -220,8 +240,8 @@ class _CountdownState extends State<Countdown> {
             min: 0,
             max: 60,
             divisions: 60,
-            activeColor: Colors.red,
-            inactiveColor: Colors.red.shade100,
+            activeColor: Color(0xFFd602ee),
+            inactiveColor: Color(0xFFf2bcf8),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -254,8 +274,28 @@ class _DiagramPageState extends State<DiagramPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFeee6ff),
       appBar: AppBar(
-        title: Text('Diagram Track'),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+                colors: [
+                  const Color(0xFF3722f6),
+                  const Color(0xFF714cfe),
+                ],
+                begin: const FractionalOffset(0.0, 0.0),
+                end: const FractionalOffset(1.0, 0.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp),
+          ),
+        ),
+        title: Text(
+          'Diagram Track',
+          style: TextStyle(
+              fontFamily: 'Caveat',
+              fontWeight: FontWeight.bold,
+              fontSize: 27.0),
+        ),
       ),
       body: FutureBuilder<List<CountDown>>(
         future: DatabaseHelper.instance.getCountDowns(),
@@ -301,7 +341,7 @@ class _DiagramPageState extends State<DiagramPage> {
             return BarTooltipItem(
               rod.y.round().toString(),
               const TextStyle(
-                color: Colors.white,
+                color: Color(0xFF283593),
                 fontWeight: FontWeight.bold,
               ),
             );
@@ -314,7 +354,7 @@ class _DiagramPageState extends State<DiagramPage> {
         bottomTitles: SideTitles(
           showTitles: true,
           getTextStyles: (context, value) => const TextStyle(
-            color: Color(0xff7589a2),
+            color: Color(0xFF283593),
             fontWeight: FontWeight.bold,
             fontSize: 14,
           ),
@@ -327,7 +367,7 @@ class _DiagramPageState extends State<DiagramPage> {
         leftTitles: SideTitles(
           showTitles: true,
           getTextStyles: (context, value) => const TextStyle(
-            color: Color(0xff7589a2),
+            color: Color(0xFF283593),
             fontWeight: FontWeight.bold,
             fontSize: 14,
           ),
@@ -356,7 +396,7 @@ class _DiagramPageState extends State<DiagramPage> {
           barRods: [
             BarChartRodData(
                 y: (value.seconds! / 180),
-                colors: [Colors.lightBlueAccent, Colors.greenAccent])
+                colors: [Color(0xFFF48FB1), Color(0xFF7E57C2)])
           ],
           showingTooltipIndicators: [0],
         ),

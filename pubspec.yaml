@@ -18,7 +18,7 @@ dependencies:
   flutter_local_notifications: ^9.1.4
   rxdart: ^0.27.3
   sqflite: ^2.0.0+4
-  path_provider: ^2.0.7
+  path_provider: ^2.0.6
   fl_chart: ^0.40.5
   intl: ^0.17.0
 
@@ -43,4 +43,14 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+  fonts:
+    - family: Fuzzy Bubbles
+      fonts:
+        - asset: fonts/FuzzyBubbles-Regular.ttf
+    - family: Caveat
+      fonts:
+        - asset: fonts/Caveat-Regular.ttf
+    - family: JosefinSans
+      fonts:
+        - asset: fonts/JosefinSans-Regular.ttf
 
